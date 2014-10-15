@@ -12,7 +12,7 @@
 #import "DDTTYLogger.h"
 #import "DDLogMacros.h"
 #import "KZBootstrapLogFormatter.h"
-
+#import "AFNetworking.h"
 static const int ddLogLevel = LOG_LEVEL_INFO;
 
 @implementation KZBAppDelegate
@@ -30,6 +30,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
   DDLogInfo(@"keyPath %@", KZB_KEYPATH(window.windowLevel));
   DDLogInfo(@"MyVariable %@", [KZBootstrap envVariableForKey:@"MyVariable"]);
   [self testUIKitOverride];
+  [self testAFNetworkingInterceptor];
   return YES;
 }
 
@@ -47,6 +48,16 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     //! this should throw assertion if KZBootstrap/Debug is included
 //    [view setNeedsDisplay];
   });
+}
+
+- (void)testAFNetworkingInterceptor
+{
+  AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+  [manager GET:@"http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"JSON: %@", responseObject);
+  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    NSLog(@"Error: %@", error);
+  }];
 }
 
 - (void)setupLogging

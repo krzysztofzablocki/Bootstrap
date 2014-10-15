@@ -8,6 +8,8 @@
 @import Foundation;
 
 @interface KZBResponseTracker : NSObject
-+ (void)trackResponse:(id)jsonResponse error:(NSError *)error forEndPoint:(NSString *)endPoint;
++ (void)trackResponse:(id)response object:(id)objectOrError forEndPoint:(NSString *)endPoint;
 + (NSDictionary *)responses;
+
++ (void)printAll;
 @end

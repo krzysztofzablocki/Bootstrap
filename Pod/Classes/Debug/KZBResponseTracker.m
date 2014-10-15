@@ -27,7 +27,7 @@
   return singleton;
 }
 
-+ (void)trackResponse:(id)jsonResponse error:(NSError *)error forEndPoint:(NSString *)endPoint
++ (void)trackResponse:(id)response object:(id)objectOrError forEndPoint:(NSString *)endPoint
 {
   if (endPoint.length == 0) {
     endPoint = @"Uncategorized";
@@ -39,7 +39,7 @@
     nodes = [NSMutableArray new];
     responses[endPoint] = nodes;
   }
-  [nodes addObject:[[KZBResponseTrackingNode alloc] initWithEndPoint:endPoint response:jsonResponse ?: error]];
+  [nodes addObject:[[KZBResponseTrackingNode alloc] initWithEndPoint:endPoint response:response responseObject:objectOrError]];
 }
 
 + (NSDictionary *)responses
@@ -56,4 +56,21 @@
   return _responses;
 }
 
++ (void)printAll
+{
+  static dispatch_once_t onceToken;
+  static NSDateFormatter *formatter;
+  dispatch_once(&onceToken, ^{
+    formatter = [NSDateFormatter new];
+    formatter.dateStyle = NSDateFormatterShortStyle;
+    formatter.timeStyle = NSDateFormatterMediumStyle;
+  });
+
+  [self.responses enumerateKeysAndObjectsUsingBlock:^(NSString *endPoint, NSArray *trackedNodes, BOOL *stop) {
+    NSLog(@"endPoint %@ has been called %@ times:\n", endPoint, @(trackedNodes.count));
+    [trackedNodes enumerateObjectsUsingBlock:^(KZBResponseTrackingNode *node, NSUInteger idx, BOOL *stop) {
+      NSLog(@"%@",[NSMutableString stringWithFormat:@"[%@] %@ {\nresponse %@\nobject %@ }\n", @(idx), [formatter stringFromDate:node.date], node.response, node.responseObject]);
+    }];
+  }];
+}
 @end

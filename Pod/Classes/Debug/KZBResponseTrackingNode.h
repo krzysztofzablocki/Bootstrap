@@ -10,7 +10,8 @@
 @property(nonatomic, copy, readonly) NSString *endPoint;
 @property(nonatomic, strong, readonly) NSDate *date;
 @property(nonatomic, strong, readonly) id response;
+@property(nonatomic, strong, readonly) id responseObject;
 
+- (instancetype)initWithEndPoint:(NSString *)endPoint response:(id)response responseObject:(id)responseObject;
 - (instancetype)initWithEndPoint:(NSString *)endPoint response:(id)response;
-
 @end

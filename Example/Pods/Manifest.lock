@@ -1,4 +1,25 @@
 PODS:
+  - AFNetworking (2.4.1):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+    - AFNetworking/UIKit
+  - AFNetworking/NSURLConnection (2.4.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.4.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.4.1)
+  - AFNetworking/Security (2.4.1)
+  - AFNetworking/Serialization (2.4.1)
+  - AFNetworking/UIKit (2.4.1):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
   - CocoaLumberjack (2.0.0-beta2):
     - CocoaLumberjack/CLI
     - CocoaLumberjack/Core
@@ -21,6 +42,7 @@ PODS:
   - RSSwizzle (0.1.0)
 
 DEPENDENCIES:
+  - AFNetworking
   - CocoaLumberjack
   - KZBootstrap (from `../`)
   - KZBootstrap/Debug (from `../`)
@@ -31,6 +53,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
+  AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
   CocoaLumberjack: 956d3fb98fed498a13d56499f262c975ef431c98
   KZAsserts: 008f2f37ba7dcb4ce87bb262a7f91406812a66e5
   KZBootstrap: fa7404673c221e02b16a497dbe0c9c0a9f1bd701
