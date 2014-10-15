@@ -1,5 +1,5 @@
 
-[![CI Status](http://img.shields.io/travis/Krzysztof Zablocki/KZBootstrap.svg?style=flat)](https://travis-ci.org/Krzysztof Zablocki/KZBootstrap)
+[![CI Status](http://img.shields.io/travis/krzysztofzablocki/KZBootstrap.svg?style=flat)](https://travis-ci.org/krzysztofzablocki/KZBootstrap)
 [![Version](https://img.shields.io/cocoapods/v/KZBootstrap.svg?style=flat)](http://cocoadocs.org/docsets/KZBootstrap)
 [![License](https://img.shields.io/cocoapods/l/KZBootstrap.svg?style=flat)](http://cocoadocs.org/docsets/KZBootstrap)
 [![Platform](https://img.shields.io/cocoapods/p/KZBootstrap.svg?style=flat)](http://cocoadocs.org/docsets/KZBootstrap)
