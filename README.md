@@ -114,6 +114,7 @@ There are few things you need to do with your project, you can either use my cra
 	- In your target .plist file append both display name and bundle identifier keys with those variables eg. `app${BUNDLE_DISPLAY_NAME_SUFFIX}`
 - Add KZBEnv user-defined setting with value of default env for each configuration then in preprocessor macros add KZBDefaultEnv=${KZBEnv}
 - Add empty file named KZBootstrapUserMacros.h anywhere in your project, and include it into your \*prefix.pch file. Include that file in your .gitignore.
+- Set warnings as described above.
 - You should have Settings.bundle in the project so the code can inject it with environment switching functionality.
 - Add script execution at the end of your Build Phases `"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh"`
 
