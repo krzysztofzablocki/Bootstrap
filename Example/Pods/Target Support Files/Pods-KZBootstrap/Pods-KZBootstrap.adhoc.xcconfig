@@ -1,0 +1,5 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CocoaLumberjack" "${PODS_ROOT}/Headers/Public/KZAsserts" "${PODS_ROOT}/Headers/Public/KZBootstrap" "${PODS_ROOT}/Headers/Public/RSSwizzle"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/CocoaLumberjack" -isystem "${PODS_ROOT}/Headers/Public/KZAsserts" -isystem "${PODS_ROOT}/Headers/Public/KZBootstrap" -isystem "${PODS_ROOT}/Headers/Public/RSSwizzle"
+OTHER_LDFLAGS = -ObjC -l"Pods-KZBootstrap-CocoaLumberjack" -l"Pods-KZBootstrap-KZAsserts" -l"Pods-KZBootstrap-KZBootstrap" -l"Pods-KZBootstrap-RSSwizzle" -framework "Foundation"
+PODS_ROOT = ${SRCROOT}/Pods

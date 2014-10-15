@@ -1,0 +1,39 @@
+PODS:
+  - CocoaLumberjack (2.0.0-beta2):
+    - CocoaLumberjack/CLI
+    - CocoaLumberjack/Core
+    - CocoaLumberjack/Extensions
+  - CocoaLumberjack/CLI (2.0.0-beta2):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Core (2.0.0-beta2)
+  - CocoaLumberjack/Extensions (2.0.0-beta2):
+    - CocoaLumberjack/Core
+  - KZAsserts (1.0)
+  - KZBootstrap (0.5.0):
+    - KZBootstrap/Core
+  - KZBootstrap/Core (0.5.0):
+    - KZAsserts (~> 1.0)
+  - KZBootstrap/Debug (0.5.0):
+    - KZAsserts (~> 1.0)
+    - RSSwizzle
+  - KZBootstrap/Logging (0.5.0):
+    - CocoaLumberjack
+  - RSSwizzle (0.1.0)
+
+DEPENDENCIES:
+  - CocoaLumberjack
+  - KZBootstrap (from `../`)
+  - KZBootstrap/Debug (from `../`)
+  - KZBootstrap/Logging (from `../`)
+
+EXTERNAL SOURCES:
+  KZBootstrap:
+    :path: ../
+
+SPEC CHECKSUMS:
+  CocoaLumberjack: 956d3fb98fed498a13d56499f262c975ef431c98
+  KZAsserts: 008f2f37ba7dcb4ce87bb262a7f91406812a66e5
+  KZBootstrap: fa7404673c221e02b16a497dbe0c9c0a9f1bd701
+  RSSwizzle: ab39962b7ec56d19c2318ec1127e253797121363
+
+COCOAPODS: 0.34.2

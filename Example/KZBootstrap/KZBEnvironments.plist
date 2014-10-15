@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>KZBEnvironments</key>
+	<array>
+		<string>QA</string>
+		<string>STAGING</string>
+		<string>PRODUCTION</string>
+	</array>
+	<key>MyVariable</key>
+	<dict>
+		<key>QA</key>
+		<string>Something</string>
+		<key>STAGING</key>
+		<string>SomethingElse</string>
+		<key>PRODUCTION</key>
+		<string>SomethingElse</string>
+	</dict>
+</dict>
+</plist>
