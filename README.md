@@ -199,6 +199,7 @@ KZBootstrap is available under the MIT license. See the LICENSE file for more in
 ## Author
 
 Krzysztof Zablocki, krzysztof.zablocki@pixle.pl
+
 [Follow me on twitter.](http://twitter.com/merowing_)
 
 # Attributions
