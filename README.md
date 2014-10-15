@@ -103,10 +103,7 @@ If you decide to include KZBootstrap/Debug subspec, you will get:
 - API interception capabilities for AFNetworking, which you can either display yourself (or send me PR with universal UI). Or just look at during debuging by calling 
 
 ```objc
-
 [KZBResponseTracker printAll]
-
-
 ```
 
 ![](/Screenshots/json.png?raw=true)
