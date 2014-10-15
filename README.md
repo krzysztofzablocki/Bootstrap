@@ -39,7 +39,7 @@ Warnings were added by compiler team for a reason, as such I start with Weveryth
 - Wno-unused-macros - annoying when doing DSL
 - Wno-disabled-macro-expansion - needed for DSL/Metaprogramming
 - Wno-gnu-statement-expression - helpful
-- Wno-language-extension-token - language extenions are useful
+- Wno-language-extension-token - language extensions are useful
 - Wno-overriding-method-mismatch - so I can change id to specific type and avoid unnecesary local variables
 
 Also treat warnings as errors is a must.
