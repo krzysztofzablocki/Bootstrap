@@ -5,7 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/KZBootstrap.svg?style=flat)](http://cocoadocs.org/docsets/KZBootstrap)
 
 # iOS Project bootstrap
-## How do you setup your iOS projects?
+How do you setup your iOS projects?
 
 Since we are approaching 2015 and I’m working on refreshing my project bootstrap I’ve decided to open source it so other can benefit or contribute. 
 
