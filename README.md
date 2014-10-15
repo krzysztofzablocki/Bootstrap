@@ -31,6 +31,8 @@ Looking at each of the icon you get following informations:
 
 > You can also use KZBootstrap API to query those informations while running your application.
 
+![](/Screenshots/log.png?raw=true)
+
 ## Code Quality and Warnings
 Warnings were added by compiler team for a reason, as such I start with Weverything and disable few warnings:
 - Wno-objc-missing-property-synthesis - don’t want to do @synthesize on properties
@@ -112,6 +114,7 @@ There are few things you need to do with your project, you can either use my cra
 	- In your target .plist file append both display name and bundle identifier keys with those variables eg. `app${BUNDLE_DISPLAY_NAME_SUFFIX}`
 - Add KZBEnv user-defined setting with value of default env for each configuration then in preprocessor macros add KZBDefaultEnv=${KZBEnv}
 - Add empty file named KZBootstrapUserMacros.h anywhere in your project, and include it into your \*prefix.pch file. Include that file in your .gitignore.
+- You should have Settings.bundle in the project so the code can inject it with environment switching functionality.
 - Add script execution at the end of your Build Phases `"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh"`
 
 Base [crafter](https://github.com/krzysztofzablocki/crafter) setup might look like this, replace CUSTOM with your preferred steps:
@@ -176,6 +179,18 @@ Crafter.configure do
   end
 end
 ```
+In you want to support dynamic env switching app delegate you can add something like this:
+
+```objc
+ NSLog(@"user variable = %@, launch argument %@", @"d", [[NSUserDefaults standardUserDefaults] objectForKey:@"KZBEnvOverride"]);
+  KZBootstrap.defaultBuildEnvironment = @"QA";
+  KZBootstrap.onCurrentEnvironmentChanged = ^(NSString *newEnv, NSString *oldEnv) {
+    NSLog(@"Changing env from %@ to %@", oldEnv, newEnv);
+  };
+  
+  NSLog(@"KZBootstrap:\n\tshortVersion: %@\n\tbranch: %@\n\tbuildNumber: %@\n\tenvironment: %@", KZBootstrap.shortVersionString, KZBootstrap.gitBranch, @(KZBootstrap.buildNumber), KZBootstrap.currentEnvironment);
+```
+
 
 # License
 KZBootstrap is available under the MIT license. See the LICENSE file for more info.
