@@ -184,7 +184,7 @@ In you want to support dynamic env switching app delegate you can add something 
 
 ```objc
  NSLog(@"user variable = %@, launch argument %@", @"d", [[NSUserDefaults standardUserDefaults] objectForKey:@"KZBEnvOverride"]);
-  KZBootstrap.defaultBuildEnvironment = @"QA";
+  KZBootstrap.defaultBuildEnvironment = KZBEnv;
   KZBootstrap.onCurrentEnvironmentChanged = ^(NSString *newEnv, NSString *oldEnv) {
     NSLog(@"Changing env from %@ to %@", oldEnv, newEnv);
   };
