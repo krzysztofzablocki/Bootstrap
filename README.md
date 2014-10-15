@@ -77,9 +77,9 @@ When you want to avoid spelling errors:
 ![](/Screenshots/keypaths.png?raw=true)
 
 ## Environments
-Often when working with big clients, you need to have multiple enviornments for Staging / Production / QA etc. They usually differ in some kind of configuration, eg. different URL endpoints.
+Often when working with big clients, you need to have multiple environments for Staging / Production / QA etc. They usually differ in some kind of configuration, eg. different URL endpoints.
 
-Too many times I’ve seen people creating separate targets for each of them, which leads to maintenance costs and unncesary bloat/clutter.
+Too many times I’ve seen people creating separate targets for each of them, which leads to maintenance costs and unnecessary bloat/clutter.
 
 As such I’ve created a different approach, with some nice automation:
 - Default environments can be changed either via xcodebuild user variable (on Jenkins) or via launch argument inside your schema.
@@ -206,7 +206,7 @@ Krzysztof Zablocki, krzysztof.zablocki@pixle.pl
 [Follow me on twitter.](http://twitter.com/merowing_)
 
 # Attributions
-All of this wouldn’t be possbile if we didn’t have such a great community, based on my own previous work but also countless other. Tried to reference everything but if you think I missed something [please let me know](http://twitter.com/merowing_).
+All of this wouldn’t be possible if we didn’t have such a great community, based on my own previous work but also countless other. Tried to reference everything but if you think I missed something [please let me know](http://twitter.com/merowing_).
 
 References:
 
