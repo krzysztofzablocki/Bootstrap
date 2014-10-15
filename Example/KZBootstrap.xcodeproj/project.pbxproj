@@ -217,8 +217,6 @@
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
 				D92CAF43189F85C257CD73E7 /* Copy Pods Resources */,
-				CDCCAB1E19ED21B7006CD949 /* ShellScript */,
-				B6C7036D9CEF425EAC9FAB0E /* KZBootstrap setup */,
 			);
 			buildRules = (
 			);
@@ -352,33 +350,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Tests/Pods-Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		B6C7036D9CEF425EAC9FAB0E /* KZBootstrap setup */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "KZBootstrap setup";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"/Users/merowing/Dropbox/Programowanie/Projekty/Bootstrap/Pod/Assets/Scripts/bootstrap.sh\"";
-		};
-		CDCCAB1E19ED21B7006CD949 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"/Users/merowing/Dropbox/Programowanie/Projekty/Bootstrap/Pod/Assets/Scripts/bootstrap.sh\"";
 		};
 		D92CAF43189F85C257CD73E7 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -97,7 +97,20 @@ If you are using CocoaLumberjack you can include KZBootstrap/Logging subspec to 
 ![](/Screenshots/logs.png?raw=true)
 
 ## Debugging - Optional
-If you decide to include KZBootstrap/Debug subspec, you will get assertions when UIKit is layouted/displayed on background thread, so you can fix your code.
+If you decide to include KZBootstrap/Debug subspec, you will get:
+
+- assertions when UIKit is layouted/displayed on background thread, so you can fix your code.
+- API interception capabilities for AFNetworking, which you can either display yourself (or send me PR with universal UI). Or just look at during debuging by calling 
+
+```objc
+
+[KZBResponseTracker printAll]
+
+
+```
+
+![](/Screenshots/json.png?raw=true)
+
 
 ## Installing KZBootstrap
 KZBootstrap is available through [CocoaPods](http://cocoapods.org). To install
