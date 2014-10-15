@@ -187,6 +187,7 @@ In you want to support dynamic env switching app delegate you can add something 
   KZBootstrap.onCurrentEnvironmentChanged = ^(NSString *newEnv, NSString *oldEnv) {
     NSLog(@"Changing env from %@ to %@", oldEnv, newEnv);
   };
+  [KZBootstrap ready];
   
   NSLog(@"KZBootstrap:\n\tshortVersion: %@\n\tbranch: %@\n\tbuildNumber: %@\n\tenvironment: %@", KZBootstrap.shortVersionString, KZBootstrap.gitBranch, @(KZBootstrap.buildNumber), KZBootstrap.currentEnvironment);
 ```
