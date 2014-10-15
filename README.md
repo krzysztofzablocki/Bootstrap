@@ -112,7 +112,7 @@ There are few things you need to do with your project, you can either use my cra
 	- In your target .plist file append both display name and bundle identifier keys with those variables eg. `app${BUNDLE_DISPLAY_NAME_SUFFIX}`
 - Add KZBEnv user-defined setting with value of default env for each configuration then in preprocessor macros add KZBDefaultEnv=${KZBEnv}
 - Add empty file named KZBootstrapUserMacros.h anywhere in your project, and include it into your \*prefix.pch file. Include that file in your .gitignore.
-- Add script execution at the end of your Build Phases `./Pods/KZBootstrap/Resources/bootstrap.sh`
+- Add script execution at the end of your Build Phases `"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh"`
 
 Base [crafter](https://github.com/krzysztofzablocki/crafter) setup might look like this, replace CUSTOM with your preferred steps:
 ```ruby
@@ -169,6 +169,10 @@ Crafter.configure do
 
     # each target have set of pods
     pods << %w(KZAsserts KZBootstrap KZBootstrap/Logging KZBootstrap/Debug)
+    
+    # add build script for bootstrap
+    scripts << {:name => 'KZBootstrap setup', :script => '"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh'}
+
   end
 end
 ```
