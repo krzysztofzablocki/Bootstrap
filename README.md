@@ -7,7 +7,7 @@
 # iOS Project bootstrap
 How do you setup your iOS projects?
 
-Since we are approaching 2015 and I’m working on refreshing my project bootstrap I’ve decided to open source it so other can benefit or contribute. 
+Since we are approaching 2015 I’m working on refreshing my project bootstrap. I’ve decided to open source it so other can benefit or contribute. 
 
 I think it’s pretty neat but decide for yourself. 
 
