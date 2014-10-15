@@ -76,9 +76,7 @@ When you want to avoid spelling errors:
 ![](/Screenshots/keypaths.png?raw=true)
 
 ## Environments
-Often when working with big clients, you need to have multiple enviornments for Staging / Production / QA etc.
-
-They usually differ in some kind of configuration, eg. different URL endpoints.
+Often when working with big clients, you need to have multiple enviornments for Staging / Production / QA etc. They usually differ in some kind of configuration, eg. different URL endpoints.
 
 Too many times I’ve seen people creating separate targets for each of them, which leads to maintenance costs and unncesary bloat/clutter.
 
@@ -117,7 +115,7 @@ There are few things you need to do with your project, you can either use my cra
 - Add empty file named KZBootstrapUserMacros.h anywhere in your project, and include it into your \*prefix.pch file. Include that file in your .gitignore.
 - Add script execution at the end of your Build Phases `./Pods/KZBootstrap/Resources/bootstrap.sh`
 
-Base [crafter](https://github.com/krzysztofzablocki/crafter) setup might look like this, replace CUSTOM with your preferred setup:
+Base [crafter](https://github.com/krzysztofzablocki/crafter) setup might look like this, replace CUSTOM with your preferred steps:
 ```ruby
 # All your configuration should happen inside configure block
 Crafter.configure do
