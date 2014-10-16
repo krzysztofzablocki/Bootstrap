@@ -52,9 +52,9 @@ Also treat warnings as errors is a must.
 - Automatically generate macro for current developer, that way a team can have different code paths while they are working on features, or different logging levels. Without git changes.
  
 ```objc
-	if merowing
+	#if merowing
 	//! my code
-	endif 
+	#endif 
 ```
 
 One more thing, let’s add some macros:
