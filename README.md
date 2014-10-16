@@ -51,11 +51,11 @@ Also treat warnings as errors is a must.
 	- add KZBIgnoreLineCount anywhere in file to disable warning generation for that file.
 - Automatically generate macro for current developer, that way a team can have different code paths while they are working on features, or different logging levels. Without git changes.
  
-
+```objc
 	if merowing
 	//! my code
 	endif 
-
+```
 
 One more thing, let’s add some macros:
 To prevent nil passed in as arguments:
