@@ -11,7 +11,7 @@ bundled_plist=$(find "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_
 bundled_settings=$(find "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}" -name "Settings.bundle" | tr -d '\r')
 src_plist=$(find "${SRCROOT}" -name "KZBEnvironments.plist" | tr -d '\r')
 
-if [ "${CONFIGURATION}" = "Release" ]; then
+if [[ "${CONFIGURATION}" == *Release*  ]]; then
   ${DIR}/processEnvironments.swift "${bundled_plist}" "${src_plist}" "${bundled_settings}" "PRODUCTION"
 else
   ${DIR}/processEnvironments.swift "${bundled_plist}" "${src_plist}" "${bundled_settings}"
