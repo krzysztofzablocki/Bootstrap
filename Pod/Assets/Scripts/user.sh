@@ -32,11 +32,11 @@ echo "#define $full4 1" >> ${temp_filepath}
 
 if [ -a "${header_path}" ]
     then
-    DIFF=$(diff ${temp_filepath} ${header_path})
+    DIFF=$(diff "${temp_filepath}" "${header_path}")
     if [ "$DIFF" != "" ] 
     then
-        cp -f ${temp_filepath} ${header_path}
+        cp -f "${temp_filepath}" "${header_path}"
     fi
 else
-    cp -f ${temp_filepath} ${header_path}
+    cp -f "${temp_filepath}" "${header_path}"
 fi
