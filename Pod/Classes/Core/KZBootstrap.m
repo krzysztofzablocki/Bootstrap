@@ -53,25 +53,58 @@ static NSString *const kLastEnvKey = @"KZBCurrentEnv";
   return value;
 }
 
++ (NSArray *)environments
+{
+  static dispatch_once_t onceToken;
+  static NSArray *listOfEnvironments;
+  
+  dispatch_once(&onceToken, ^{
+    NSDictionary *propertyList = [self environment];
+        
+    NSString *envKey = @"KZBEnvironments";
+    listOfEnvironments = propertyList[envKey];
+  });
+  
+  return listOfEnvironments;
+}
+
 + (NSDictionary *)environmentVariables
 {
   static dispatch_once_t onceToken;
   static NSDictionary *environmentVariables;
+    
+  dispatch_once(&onceToken, ^{
+    NSMutableDictionary *propertyList = [[self environment] mutableCopy];
+      
+    NSString *envKey = @"KZBEnvironments";
+    [propertyList removeObjectForKey:envKey];
+    environmentVariables = [propertyList copy];
+  });
+    
+  return environmentVariables;
+}
+
++ (NSDictionary *)environment
+{
+  static dispatch_once_t onceToken;
+  static NSDictionary *environment;
+
   dispatch_once(&onceToken, ^{
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"KZBEnvironments" withExtension:@"plist"];
     AssertTrueOrReturn(url);
     NSError *error = nil;
     NSMutableDictionary *propertyList = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:url] options:NSPropertyListMutableContainers format:NULL error:&error];
     AssertTrueOrReturn(propertyList);
+      
+    environment = [propertyList copy];
 
     NSString *envKey = @"KZBEnvironments";
     NSArray *listOfEnvironments = [propertyList valueForKey:envKey];
     [propertyList removeObjectForKey:envKey];
     [self ensureValidityOfEnvironmentVariables:propertyList forEnvList:listOfEnvironments];
-    environmentVariables = [propertyList copy];
   });
 
-  return environmentVariables;
+  return environment;
 }
 
 + (void)ensureValidityOfEnvironmentVariables:(NSMutableDictionary *)dictionary forEnvList:(NSArray *)list

@@ -21,4 +21,11 @@
 + (id)envVariableForKey:(NSString *)key;
 
 + (void)ready;
+
+/**
+ *  Returns all environments that are included in environments PLIST
+ *
+ *  @return array of strings that represent environments
+ */
++ (NSArray *)environments;
 @end
