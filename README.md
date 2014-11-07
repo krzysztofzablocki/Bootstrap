@@ -185,7 +185,7 @@ Crafter.configure do
     pods << %w(KZAsserts KZBootstrap KZBootstrap/Logging KZBootstrap/Debug)
     
     # add build script for bootstrap
-    scripts << {:name => 'KZBootstrap setup', :script => '"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh'}
+    scripts << {:name => 'KZBootstrap setup', :script => '"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh"'}
 
   end
 end
