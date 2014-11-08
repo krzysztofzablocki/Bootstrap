@@ -41,6 +41,8 @@
         }
 
         RSSWCallOriginal();
+      } else {
+        RSSWCallOriginal();
       }
     }), RSSwizzleModeOncePerClass, key);
   }];
