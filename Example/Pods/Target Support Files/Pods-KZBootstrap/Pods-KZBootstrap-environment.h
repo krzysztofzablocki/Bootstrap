@@ -54,17 +54,17 @@
 #define COCOAPODS_VERSION_MINOR_CocoaLumberjack 0
 #define COCOAPODS_VERSION_PATCH_CocoaLumberjack 0
 
-// CocoaLumberjack/CLI
-#define COCOAPODS_POD_AVAILABLE_CocoaLumberjack_CLI
-#define COCOAPODS_VERSION_MAJOR_CocoaLumberjack_CLI 2
-#define COCOAPODS_VERSION_MINOR_CocoaLumberjack_CLI 0
-#define COCOAPODS_VERSION_PATCH_CocoaLumberjack_CLI 0
-
 // CocoaLumberjack/Core
 #define COCOAPODS_POD_AVAILABLE_CocoaLumberjack_Core
 #define COCOAPODS_VERSION_MAJOR_CocoaLumberjack_Core 2
 #define COCOAPODS_VERSION_MINOR_CocoaLumberjack_Core 0
 #define COCOAPODS_VERSION_PATCH_CocoaLumberjack_Core 0
+
+// CocoaLumberjack/Default
+#define COCOAPODS_POD_AVAILABLE_CocoaLumberjack_Default
+#define COCOAPODS_VERSION_MAJOR_CocoaLumberjack_Default 2
+#define COCOAPODS_VERSION_MINOR_CocoaLumberjack_Default 0
+#define COCOAPODS_VERSION_PATCH_CocoaLumberjack_Default 0
 
 // CocoaLumberjack/Extensions
 #define COCOAPODS_POD_AVAILABLE_CocoaLumberjack_Extensions
@@ -82,25 +82,25 @@
 #define COCOAPODS_POD_AVAILABLE_KZBootstrap
 #define COCOAPODS_VERSION_MAJOR_KZBootstrap 0
 #define COCOAPODS_VERSION_MINOR_KZBootstrap 5
-#define COCOAPODS_VERSION_PATCH_KZBootstrap 0
+#define COCOAPODS_VERSION_PATCH_KZBootstrap 2
 
 // KZBootstrap/Core
 #define COCOAPODS_POD_AVAILABLE_KZBootstrap_Core
 #define COCOAPODS_VERSION_MAJOR_KZBootstrap_Core 0
 #define COCOAPODS_VERSION_MINOR_KZBootstrap_Core 5
-#define COCOAPODS_VERSION_PATCH_KZBootstrap_Core 0
+#define COCOAPODS_VERSION_PATCH_KZBootstrap_Core 2
 
 // KZBootstrap/Debug
 #define COCOAPODS_POD_AVAILABLE_KZBootstrap_Debug
 #define COCOAPODS_VERSION_MAJOR_KZBootstrap_Debug 0
 #define COCOAPODS_VERSION_MINOR_KZBootstrap_Debug 5
-#define COCOAPODS_VERSION_PATCH_KZBootstrap_Debug 0
+#define COCOAPODS_VERSION_PATCH_KZBootstrap_Debug 2
 
 // KZBootstrap/Logging
 #define COCOAPODS_POD_AVAILABLE_KZBootstrap_Logging
 #define COCOAPODS_VERSION_MAJOR_KZBootstrap_Logging 0
 #define COCOAPODS_VERSION_MINOR_KZBootstrap_Logging 5
-#define COCOAPODS_VERSION_PATCH_KZBootstrap_Logging 0
+#define COCOAPODS_VERSION_PATCH_KZBootstrap_Logging 2
 
 // RSSwizzle
 #define COCOAPODS_POD_AVAILABLE_RSSwizzle

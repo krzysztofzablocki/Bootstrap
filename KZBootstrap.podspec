@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Logging' do |ss|
     ss.source_files = 'Pod/Classes/Logging'
-    ss.dependency "CocoaLumberjack"
+    ss.dependency "CocoaLumberjack", "~> 2.0.0-beta4"
   end
 
 end
