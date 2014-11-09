@@ -1,11 +1,11 @@
 PODS:
   - AFNetworking (2.4.1):
-    - AFNetworking/NSURLConnection
-    - AFNetworking/NSURLSession
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-    - AFNetworking/UIKit
+    - AFNetworking/NSURLConnection (= 2.4.1)
+    - AFNetworking/NSURLSession (= 2.4.1)
+    - AFNetworking/Reachability (= 2.4.1)
+    - AFNetworking/Security (= 2.4.1)
+    - AFNetworking/Serialization (= 2.4.1)
+    - AFNetworking/UIKit (= 2.4.1)
   - AFNetworking/NSURLConnection (2.4.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
@@ -20,25 +20,24 @@ PODS:
   - AFNetworking/UIKit (2.4.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - CocoaLumberjack (2.0.0-beta2):
-    - CocoaLumberjack/CLI
+  - CocoaLumberjack (2.0.0-beta4):
+    - CocoaLumberjack/Default (= 2.0.0-beta4)
+    - CocoaLumberjack/Extensions (= 2.0.0-beta4)
+  - CocoaLumberjack/Core (2.0.0-beta4)
+  - CocoaLumberjack/Default (2.0.0-beta4):
     - CocoaLumberjack/Core
-    - CocoaLumberjack/Extensions
-  - CocoaLumberjack/CLI (2.0.0-beta2):
-    - CocoaLumberjack/Core
-  - CocoaLumberjack/Core (2.0.0-beta2)
-  - CocoaLumberjack/Extensions (2.0.0-beta2):
-    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (2.0.0-beta4):
+    - CocoaLumberjack/Default
   - KZAsserts (1.0)
-  - KZBootstrap (0.5.0):
-    - KZBootstrap/Core
-  - KZBootstrap/Core (0.5.0):
+  - KZBootstrap (0.5.2):
+    - KZBootstrap/Core (= 0.5.2)
+  - KZBootstrap/Core (0.5.2):
     - KZAsserts (~> 1.0)
-  - KZBootstrap/Debug (0.5.0):
+  - KZBootstrap/Debug (0.5.2):
     - KZAsserts (~> 1.0)
     - RSSwizzle
-  - KZBootstrap/Logging (0.5.0):
-    - CocoaLumberjack
+  - KZBootstrap/Logging (0.5.2):
+    - CocoaLumberjack (~> 2.0.0-beta4)
   - RSSwizzle (0.1.0)
 
 DEPENDENCIES:
@@ -54,9 +53,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
-  CocoaLumberjack: 956d3fb98fed498a13d56499f262c975ef431c98
+  CocoaLumberjack: 24153b24b17d853d7182b22b128971fb98e8cb18
   KZAsserts: 008f2f37ba7dcb4ce87bb262a7f91406812a66e5
-  KZBootstrap: fa7404673c221e02b16a497dbe0c9c0a9f1bd701
+  KZBootstrap: 12feef4f3d704bb253f626214177e26bcf3b3434
   RSSwizzle: ab39962b7ec56d19c2318ec1127e253797121363
 
-COCOAPODS: 0.34.2
+COCOAPODS: 0.35.0.rc2
