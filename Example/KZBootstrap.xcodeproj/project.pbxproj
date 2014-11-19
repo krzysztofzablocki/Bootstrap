@@ -622,7 +622,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
-					"KZBDefaultEnv=\"$(KZBEnv)\"",
+					"KZBEnv=\"$(KZBEnv)\"",
 				);
 				INFOPLIST_FILE = "KZBootstrap/KZBootstrap-Info.plist";
 				KZBEnv = "@\\\"QA\\\"";
@@ -750,7 +750,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
-					"KZBDefaultEnv=\"$(KZBEnv)\"",
+					"KZBEnv=\"$(KZBEnv)\"",
 				);
 				INFOPLIST_FILE = "KZBootstrap/KZBootstrap-Info.plist";
 				KZBEnv = "@\\\"QA\\\"";
