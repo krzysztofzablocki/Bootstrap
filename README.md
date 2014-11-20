@@ -19,7 +19,7 @@ A project by default has 3 configurations:
 2. Release
 3. Adhoc
 
-Each configuration can be put side by side on same device, and you can clearly distingiush each build. Easier to find issues across different version and branches.
+Each configuration can be put side by side on same device, and you can clearly distinguish each build. Easier to find issues across different versions and branches.
 ![](/Screenshots/Configurations.png?raw=true)
 
 Looking at each of the icon you get following informations:
@@ -47,7 +47,7 @@ Also treat warnings as errors is a must.
 ### That’s not all, let’s add some scripts:
 
 - turn all todo/fixme into warnings![](/Screenshots/todo.png?raw=true)
-- warnings when files get to big ![](/Screenshots/lines.png?raw=true)
+- warnings when files get too big ![](/Screenshots/lines.png?raw=true)
 	- add KZBIgnoreLineCount anywhere in file to disable warning generation for that file.
 - Automatically generate macro for current developer, that way a team can have different code paths while they are working on features, or different logging levels. Without git changes.
  
@@ -87,7 +87,7 @@ As such I’ve created a different approach, with some nice automation:
 	- in custom Schema: Edit Scheme-\>Arguments-\>Launch Arguments-\> “-KZBEnvOverride Production”
 - Environments can be changed without reinstalling application, even while it’s running.
 - All environments variables are created in a single plist ![](/Screenshots/plist.png?raw=true)
-	- If any of the variables is missing entry for one of the environments you get **compile time error**. You can even click on it to go to configuration file. ![](/Screenshots/env_error.png?raw=true)
+	- If any of the variables are missing an entry for one of the environments you get **compile time error**. You can even click on it to go to the configuration file. ![](/Screenshots/env_error.png?raw=true)
 	- Settings bundle will be *automatically injected* to give you environment switching. ![](/Screenshots/Settings.png?raw=true)
 	- You can register for callback when env changes, useful if you need to reset your database etc.
 	- Production builds will remove all variables for other environments to prevent exposing non-production and unused configurations.
@@ -216,7 +216,7 @@ Krzysztof Zablocki, krzysztof.zablocki@pixle.pl
 [Follow me on twitter.](http://twitter.com/merowing_)
 
 # Attributions
-All of this wouldn’t be possible if we didn’t have such a great community, based on my own previous work but also countless other. Tried to reference everything but if you think I missed something [please let me know](http://twitter.com/merowing_).
+All of this wouldn’t be possible if we didn’t have such a great community, based on my own previous work but also countless others. Tried to reference everything but if you think I missed something [please let me know](http://twitter.com/merowing_).
 
 References:
 
