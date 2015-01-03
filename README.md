@@ -215,6 +215,8 @@ Krzysztof Zablocki, krzysztof.zablocki@pixle.pl
 
 [Follow me on twitter.](http://twitter.com/merowing_)
 
+If you'd like to support my tools and tutorials, you can do that [via Patreon](http://www.patreon.com/merowing)
+
 # Attributions
 All of this wouldn’t be possible if we didn’t have such a great community, based on my own previous work but also countless others. Tried to reference everything but if you think I missed something [please let me know](http://twitter.com/merowing_).
 
