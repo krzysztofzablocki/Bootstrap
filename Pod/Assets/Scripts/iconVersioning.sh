@@ -4,16 +4,16 @@ export PATH=/opt/local/bin/:/opt/local/sbin:$PATH:/usr/local/bin:
 convertPath=`which convert`
 echo ${convertPath}
 if [[ ! -f ${convertPath} || -z ${convertPath} ]]; then
-echo "WARNING: Skipping Icon versioning, you need to install ImageMagick, you can use brew to simplify process:
-brew install imagemagick"
+    echo "WARNING: Skipping Icon versioning, you need to install ImageMagick, you can use brew to simplify process:
+    brew install imagemagick"
 exit 0;
 fi
 
 gsPath=`which gs`
 echo ${gsPath}
 if [[ ! -f ${gsPath} || -z ${gsPath} ]]; then
-echo "WARNING: Skipping Icon versioning, you need to install ghostscript (fonts) first, you can use brew to simplify process:
-brew install ghostscript"
+    echo "WARNING: Skipping Icon versioning, you need to install ghostscript (fonts) first, you can use brew to simplify process:
+    brew install ghostscript"
 exit 0;
 fi
 
