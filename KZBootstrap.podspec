@@ -22,6 +22,8 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, '7.0'
   s.requires_arc = true
+  
+	s.preserve_paths = "Pod/Assets/Scripts/*.{sh,swift}"
 
   s.public_header_files = 'Pod/Classes/**/*.h'
   s.requires_arc = true
