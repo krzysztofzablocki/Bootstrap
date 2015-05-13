@@ -2,10 +2,10 @@
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "${DIR}" ]]; then DIR="${PWD}"; fi
-. "${DIR}/iconVersioning.sh"
-. "${DIR}/lines.sh"
-. "${DIR}/todo.sh"
-. "${DIR}/user.sh"
+"${DIR}/iconVersioning.sh"
+"${DIR}/lines.sh"
+"${DIR}/todo.sh"
+"${DIR}/user.sh"
 
 bundled_plist=$(find "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/" -name "KZBEnvironments.plist" | tr -d '\r')
 bundled_settings=$(find "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/" -name "Settings.bundle" | tr -d '\r')
