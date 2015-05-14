@@ -126,7 +126,15 @@ There are few things you need to do with your project, you can either use my cra
 - Add empty file named KZBootstrapUserMacros.h anywhere in your project, and include it into your \*prefix.pch file. Include that file in your .gitignore.
 - Set warnings as described above.
 - You should have Settings.bundle in the project so the code can inject it with environment switching functionality.
-- Add script execution at the end of your Build Phases `"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh"`
+- Add script execution at the end of your Build Phases
+`"${SRCROOT}/Pods/KZBootstrap/Pod/Assets/Scripts/bootstrap.sh"`  You
+can selectively enable features by passing arguments to bootstrap.sh
+	- `-l` will enable line-count warnings
+	- `-t` will enable TODO warnings
+	- `-u` will enable user macros
+	- `-n` will enable build-number automation
+	- `-i` will enable icon versioning. (This also enables
+      build-number automation.)
 
 Base [crafter](https://github.com/krzysztofzablocki/crafter) setup might look like this, replace CUSTOM with your preferred steps:
 ```ruby
