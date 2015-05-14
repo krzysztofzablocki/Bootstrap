@@ -25,7 +25,6 @@ version=`/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "${INFOPLIST_FILE}"`
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-. "$DIR/buildNumber.sh"
 
 branch="${branch}->${BUNDLE_DISPLAY_NAME_SUFFIX}"
 
