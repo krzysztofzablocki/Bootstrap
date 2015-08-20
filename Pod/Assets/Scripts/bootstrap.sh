@@ -68,7 +68,7 @@ bundled_settings=$(find "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLD
 src_plist=$(find "${SRCROOT}" -name "KZBEnvironments.plist" | tr -d '\r')
 
 if [[ "${CONFIGURATION}" == *Release*  ]]; then
-  env -i xcrun -sdk macosx swift "${DIR}/processEnvironments.swift" "${bundled_plist}" "${src_plist}" "${bundled_settings}" "PRODUCTION"
+  env -i xcrun -sdk macosx swift "${DIR}/processEnvironments.swift" "${bundled_plist}" "${src_plist}" "${bundled_settings}" "${KZBEnv}"
 else
   env -i xcrun -sdk macosx swift "${DIR}/processEnvironments.swift" "${bundled_plist}" "${src_plist}" "${bundled_settings}"
 fi
