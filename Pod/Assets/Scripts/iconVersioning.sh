@@ -140,6 +140,7 @@ while [  $i -lt $last_icon_index ]; do
   else
     processIcon "${icon}.png"
     processIcon "${icon}@2x.png"
+    processIcon "${icon}@3x.png"
   fi
   let i=i+1
 done
