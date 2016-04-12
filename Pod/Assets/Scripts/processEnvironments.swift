@@ -64,7 +64,8 @@ func filterEnvSettings(entries: NSDictionary, forEnv env: String, prependMessage
 }
 
 
-func processSettings(var settingsPath: String, availableEnvs:[String], allowedEnv: String? = nil) -> Bool {
+func processSettings(settingsPath: String, availableEnvs:[String], allowedEnv: String? = nil) -> Bool {
+    var settingsPath = settingsPath
     let preferenceKey = "PreferenceSpecifiers"
     settingsPath = (settingsPath as NSString).stringByAppendingPathComponent("Root.plist") as String
     
@@ -113,7 +114,7 @@ func processEnvs(bundledPath: String, sourcePath: String, settingsPath: String, 
         
         let settingsAdjusted = processSettings(settingsPath, availableEnvs: availableEnvs, allowedEnv: allowedEnv)
         if settingsAdjusted == false {
-            print("\(__FILE__):\(__LINE__): Unable to adjust settings bundle")
+            print("\(#file):\(#line): Unable to adjust settings bundle")
         }
         return settingsAdjusted
     }
@@ -123,7 +124,7 @@ func processEnvs(bundledPath: String, sourcePath: String, settingsPath: String, 
 
 let count = Process.arguments.count
 if count == 1 || count > 5 {
-    print("\(__FILE__):\(__LINE__): Received \(count) arguments, Proper usage: processEnvironments.swift -- [bundledPath] [srcPath] [settingsPath] [allowedEnv]")
+    print("\(#file):\(#line): Received \(count) arguments, Proper usage: processEnvironments.swift -- [bundledPath] [srcPath] [settingsPath] [allowedEnv]")
     exit(1)
 }
 
