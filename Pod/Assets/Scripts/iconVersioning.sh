@@ -1,4 +1,9 @@
 #!/bin/sh
+
+if [ $CONFIGURATION = "Release" ]; then
+  exit 0
+fi
+
 export PATH=/opt/local/bin/:/opt/local/sbin:$PATH:/usr/local/bin:
 
 convertPath=`which convert`
@@ -88,11 +93,6 @@ function processIcon() {
     if [[ -f ${stored_original_file} ]]; then
       echo "found previous file at path ${stored_original_file}, using it as base"
       mv "${stored_original_file}" "${base_path}"
-    fi
-
-    if [ $CONFIGURATION = "Release" ]; then
-      cp "${base_path}" "$target_path"
-      return 0;
     fi
 
     echo "Reverting optimized PNG to normal"
