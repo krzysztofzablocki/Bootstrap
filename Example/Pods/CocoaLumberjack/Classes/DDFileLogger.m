@@ -1,6 +1,6 @@
 // Software License Agreement (BSD License)
 //
-// Copyright (c) 2010-2014, Deusty, LLC
+// Copyright (c) 2010-2016, Deusty, LLC
 // All rights reserved.
 //
 // Redistribution and use of this software in source and binary forms,
@@ -31,13 +31,15 @@
 // So we use primitive logging macros around NSLog.
 // We maintain the NS prefix on the macros to be explicit about the fact that we're using NSLog.
 
-#define LOG_LEVEL 2
+#ifndef DD_NSLOG_LEVEL
+    #define DD_NSLOG_LEVEL 2
+#endif
 
-#define NSLogError(frmt, ...)    do{ if(LOG_LEVEL >= 1) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogWarn(frmt, ...)     do{ if(LOG_LEVEL >= 2) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogInfo(frmt, ...)     do{ if(LOG_LEVEL >= 3) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogDebug(frmt, ...)    do{ if(LOG_LEVEL >= 4) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogVerbose(frmt, ...)  do{ if(LOG_LEVEL >= 5) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogError(frmt, ...)    do{ if(DD_NSLOG_LEVEL >= 1) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogWarn(frmt, ...)     do{ if(DD_NSLOG_LEVEL >= 2) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogInfo(frmt, ...)     do{ if(DD_NSLOG_LEVEL >= 3) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogDebug(frmt, ...)    do{ if(DD_NSLOG_LEVEL >= 4) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogVerbose(frmt, ...)  do{ if(DD_NSLOG_LEVEL >= 5) NSLog((frmt), ##__VA_ARGS__); } while(0)
 
 
 #if TARGET_OS_IPHONE
@@ -98,6 +100,18 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     }
 
     return self;
+}
+
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey
+{
+    BOOL automatic = NO;
+    if ([theKey isEqualToString:@"maximumNumberOfLogFiles"] || [theKey isEqualToString:@"logFilesDiskQuota"]) {
+        automatic = NO;
+    } else {
+        automatic = [super automaticallyNotifiesObserversForKey:theKey];
+    }
+    
+    return automatic;
 }
 
 #if TARGET_OS_IPHONE
@@ -230,7 +244,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 - (NSString *)defaultLogsDirectory {
 #if TARGET_OS_IPHONE
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *baseDir = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+    NSString *baseDir = paths.firstObject;
     NSString *logsDirectory = [baseDir stringByAppendingPathComponent:@"Logs"];
 
 #else
@@ -262,12 +276,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return _logsDirectory;
 }
 
-/**
- * Default log file name is "<bundle identifier> <date> <time>.log".
- * Example: MobileSafari 2013-12-03 17-14.log
- *
- * You can change it by overriding newLogFileName and isLogFile: methods.
- **/
 - (BOOL)isLogFile:(NSString *)fileName {
     NSString *appName = [self applicationName];
 
@@ -317,6 +325,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 
     if (dateFormatter == nil) {
         dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
         [dateFormatter setDateFormat:dateFormat];
         [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         dictionary[key] = dateFormatter;
@@ -325,10 +334,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return dateFormatter;
 }
 
-/**
- * Returns an array of NSString objects,
- * each of which is the filePath to an existing log file on disk.
- **/
 - (NSArray *)unsortedLogFilePaths {
     NSString *logsDirectory = [self logsDirectory];
     NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:logsDirectory error:nil];
@@ -361,10 +366,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return unsortedLogFilePaths;
 }
 
-/**
- * Returns an array of NSString objects,
- * each of which is the fileName of an existing log file on disk.
- **/
 - (NSArray *)unsortedLogFileNames {
     NSArray *unsortedLogFilePaths = [self unsortedLogFilePaths];
 
@@ -377,11 +378,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return unsortedLogFileNames;
 }
 
-/**
- * Returns an array of DDLogFileInfo objects,
- * each representing an existing log file on disk,
- * and containing important information about the log file such as it's modification date and size.
- **/
 - (NSArray *)unsortedLogFileInfos {
     NSArray *unsortedLogFilePaths = [self unsortedLogFilePaths];
 
@@ -396,11 +392,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return unsortedLogFileInfos;
 }
 
-/**
- * Just like the unsortedLogFilePaths method, but sorts the array.
- * The items in the array are sorted by creation date.
- * The first item in the array will be the most recently created log file.
- **/
 - (NSArray *)sortedLogFilePaths {
     NSArray *sortedLogFileInfos = [self sortedLogFileInfos];
 
@@ -413,11 +404,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return sortedLogFilePaths;
 }
 
-/**
- * Just like the unsortedLogFileNames method, but sorts the array.
- * The items in the array are sorted by creation date.
- * The first item in the array will be the most recently created log file.
- **/
 - (NSArray *)sortedLogFileNames {
     NSArray *sortedLogFileInfos = [self sortedLogFileInfos];
 
@@ -430,11 +416,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return sortedLogFileNames;
 }
 
-/**
- * Just like the unsortedLogFileInfos method, but sorts the array.
- * The items in the array are sorted by creation date.
- * The first item in the array will be the most recently created log file.
- **/
 - (NSArray *)sortedLogFileInfos {
     return [[self unsortedLogFileInfos] sortedArrayUsingSelector:@selector(reverseCompareByCreationDate:)];
 }
@@ -443,12 +424,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 #pragma mark Creation
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * Generates log file name with default format "<bundle identifier> <date> <time>.log"
- * Example: MobileSafari 2013-12-03 17-14.log
- *
- * You can change it by overriding newLogFileName and isLogFile: methods.
- **/
 - (NSString *)newLogFileName {
     NSString *appName = [self applicationName];
 
@@ -458,9 +433,6 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     return [NSString stringWithFormat:@"%@ %@.log", appName, formattedDate];
 }
 
-/**
- * Generates a new unique log file path, and creates the corresponding log file.
- **/
 - (NSString *)createNewLogFile {
     NSString *fileName = [self newLogFileName];
     NSString *logsDirectory = [self logsDirectory];
@@ -817,7 +789,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
             [self rollLogFileNow];
 
             if (completionBlock) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     completionBlock();
                 });
             }
@@ -940,7 +912,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
             if (!_doNotReuseLogFiles && doesAppRunInBackground()) {
                 NSString *key = mostRecentLogFileInfo.fileAttributes[NSFileProtectionKey];
 
-                if (!([key isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication] || [key isEqualToString:NSFileProtectionNone])) {
+                if ([key length] > 0 && !([key isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication] || [key isEqualToString:NSFileProtectionNone])) {
                     shouldArchiveMostRecent = YES;
                 }
             }
@@ -1067,9 +1039,9 @@ static int exception_count = 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if TARGET_IPHONE_SIMULATOR
-    NSString * const kDDXAttrArchivedName = @"archived";
+    static NSString * const kDDXAttrArchivedName = @"archived";
 #else
-    NSString * const kDDXAttrArchivedName = @"lumberjack.log.archived";
+    static NSString * const kDDXAttrArchivedName = @"lumberjack.log.archived";
 #endif
 
 @interface DDLogFileInfo () {
@@ -1284,7 +1256,7 @@ static int exception_count = 0;
     // Watch out for file names without an extension
 
     for (NSUInteger i = 1; i < components.count; i++) {
-        NSString *attr = [components objectAtIndex:i];
+        NSString *attr = components[i];
 
         if ([attrName isEqualToString:attr]) {
             return YES;
@@ -1316,7 +1288,7 @@ static int exception_count = 0;
     NSMutableString *newFileName = [NSMutableString stringWithCapacity:estimatedNewLength];
 
     if (count > 0) {
-        [newFileName appendString:[components objectAtIndex:0]];
+        [newFileName appendString:components.firstObject];
     }
 
     NSString *lastExt = @"";
@@ -1324,7 +1296,7 @@ static int exception_count = 0;
     NSUInteger i;
 
     for (i = 1; i < count; i++) {
-        NSString *attr = [components objectAtIndex:i];
+        NSString *attr = components[i];
 
         if ([attr length] == 0) {
             continue;
@@ -1373,7 +1345,7 @@ static int exception_count = 0;
     NSMutableString *newFileName = [NSMutableString stringWithCapacity:estimatedNewLength];
 
     if (count > 0) {
-        [newFileName appendString:[components objectAtIndex:0]];
+        [newFileName appendString:components.firstObject];
     }
 
     BOOL found = NO;
@@ -1381,7 +1353,7 @@ static int exception_count = 0;
     NSUInteger i;
 
     for (i = 1; i < count; i++) {
-        NSString *attr = [components objectAtIndex:i];
+        NSString *attr = components[i];
 
         if ([attrName isEqualToString:attr]) {
             found = YES;
@@ -1415,7 +1387,7 @@ static int exception_count = 0;
     if (result < 0) {
         NSLogError(@"DDLogFileInfo: setxattr(%@, %@): error = %s",
                    attrName,
-                   self.fileName,
+                   filePath,
                    strerror(errno));
     }
 }

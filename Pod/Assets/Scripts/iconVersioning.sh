@@ -127,12 +127,12 @@ function processIcon() {
     echo "Overlayed ${target_path}"
 }
 
-icon_count=`/usr/libexec/PlistBuddy -c "Print CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconFiles" "${CONFIGURATION_BUILD_DIR}/${INFOPLIST_PATH}" | wc -l`
+icon_count=`/usr/libexec/PlistBuddy -c "Print CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles" "${CONFIGURATION_BUILD_DIR}/${INFOPLIST_PATH}" | wc -l`
 last_icon_index=$((${icon_count} - 2))
 
 i=0
 while [  $i -lt $last_icon_index ]; do
-  icon=`/usr/libexec/PlistBuddy -c "Print CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconFiles:$i" "${CONFIGURATION_BUILD_DIR}/${INFOPLIST_PATH}"`
+  icon=`/usr/libexec/PlistBuddy -c "Print CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles:$i" "${CONFIGURATION_BUILD_DIR}/${INFOPLIST_PATH}"`
 
   if [[ $icon == *.png ]] || [[ $icon == *.PNG ]]
   then
@@ -141,13 +141,10 @@ while [  $i -lt $last_icon_index ]; do
     processIcon "${icon}.png"
     processIcon "${icon}@2x.png"
     processIcon "${icon}@3x.png"
+
+    processIcon "${icon}~ipad.png"
+    processIcon "${icon}@2x~ipad.png"
+    processIcon "${icon}@3x~ipad.png"
   fi
   let i=i+1
 done
-
-# Workaround to fix issue#16 to use wildcard * to actually find the file
-# Only 72x72 and 76x76 that we need for ipad app icons
-processIcon "AppIcon72x72~ipad*"
-processIcon "AppIcon72x72@2x~ipad*"
-processIcon "AppIcon76x76~ipad*"
-processIcon "AppIcon76x76@2x~ipad*"

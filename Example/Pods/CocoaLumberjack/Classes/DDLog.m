@@ -1,6 +1,6 @@
 // Software License Agreement (BSD License)
 //
-// Copyright (c) 2010-2014, Deusty, LLC
+// Copyright (c) 2010-2016, Deusty, LLC
 // All rights reserved.
 //
 // Redistribution and use of this software in source and binary forms,
@@ -13,6 +13,11 @@
 //   to endorse or promote products derived from this software without specific
 //   prior written permission of Deusty, LLC.
 
+// Disable legacy macros
+#ifndef DD_LEGACY_MACROS
+    #define DD_LEGACY_MACROS 0
+#endif
+
 #import "DDLog.h"
 
 #import <pthread.h>
@@ -21,7 +26,7 @@
 #import <mach/host_info.h>
 #import <libkern/OSAtomic.h>
 #import <Availability.h>
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
     #import <UIKit/UIDevice.h>
 #endif
 
@@ -37,7 +42,9 @@
 // So we use a primitive logging macro around NSLog.
 // We maintain the NS prefix on the macros to be explicit about the fact that we're using NSLog.
 
-#define DD_DEBUG NO
+#ifndef DD_DEBUG
+    #define DD_DEBUG NO
+#endif
 
 #define NSLogDebug(frmt, ...) do{ if(DD_DEBUG) NSLog((frmt), ##__VA_ARGS__); } while(0)
 
@@ -86,11 +93,15 @@ static void *const GlobalLoggingQueueIdentityKey = (void *)&GlobalLoggingQueueId
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@implementation DDLog
+@interface DDLog ()
 
 // An array used to manage all the individual loggers.
 // The array is only modified on the loggingQueue/loggingThread.
-static NSMutableArray *_loggers;
+@property (nonatomic, strong) NSMutableArray *_loggers;
+
+@end
+
+@implementation DDLog
 
 // All logging statements are added to the same queue to ensure FIFO operation.
 static dispatch_queue_t _loggingQueue;
@@ -107,6 +118,23 @@ static dispatch_semaphore_t _queueSemaphore;
 static NSUInteger _numProcessors;
 
 /**
+ *  Returns the singleton `DDLog`.
+ *  The instance is used by `DDLog` class methods.
+ *
+ *  @return The singleton `DDLog`.
+ */
++ (instancetype)sharedInstance {
+    static id sharedInstance = nil;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    
+    return sharedInstance;
+}
+
+/**
  * The runtime sends initialize to each class in a program exactly one time just before the class,
  * or any class that inherits from it, is sent its first message from within the program. (Thus the
  * method may never be invoked if the class is not used.) The runtime sends the initialize message to
@@ -116,51 +144,53 @@ static NSUInteger _numProcessors;
  **/
 + (void)initialize {
     static dispatch_once_t DDLogOnceToken;
-
+    
     dispatch_once(&DDLogOnceToken, ^{
-        _loggers = [[NSMutableArray alloc] initWithCapacity:4];
-
         NSLogDebug(@"DDLog: Using grand central dispatch");
-
+        
         _loggingQueue = dispatch_queue_create("cocoa.lumberjack", NULL);
         _loggingGroup = dispatch_group_create();
-
+        
         void *nonNullValue = GlobalLoggingQueueIdentityKey; // Whatever, just not null
         dispatch_queue_set_specific(_loggingQueue, GlobalLoggingQueueIdentityKey, nonNullValue, NULL);
-
+        
         _queueSemaphore = dispatch_semaphore_create(LOG_MAX_QUEUE_SIZE);
-
+        
         // Figure out how many processors are available.
         // This may be used later for an optimization on uniprocessor machines.
-
-        host_basic_info_data_t hostInfo;
-        mach_msg_type_number_t infoCount;
-
-        infoCount = HOST_BASIC_INFO_COUNT;
-        host_info(mach_host_self(), HOST_BASIC_INFO, (host_info_t)&hostInfo, &infoCount);
-
-        NSUInteger result = (NSUInteger)hostInfo.max_cpus;
-        NSUInteger one    = (NSUInteger)1;
-
-        _numProcessors = MAX(result, one);
-
+        
+        _numProcessors = MAX([NSProcessInfo processInfo].processorCount, 1);
+        
         NSLogDebug(@"DDLog: numProcessors = %@", @(_numProcessors));
+    });
+}
 
-
-#if TARGET_OS_IPHONE
+/**
+ *  The `DDLog` initializer.
+ *  Static variables are set only once.
+ *
+ *  @return An initialized `DDLog` instance.
+ */
+- (id)init {
+    self = [super init];
+    
+    if (self) {
+        self._loggers = [[NSMutableArray alloc] initWithCapacity:4];
+        
+#if TARGET_OS_IOS
         NSString *notificationName = @"UIApplicationWillTerminateNotification";
 #else
         NSString *notificationName = nil;
-
+        
         // On Command Line Tool apps AppKit may not be avaliable
 #ifdef NSAppKitVersionNumber10_0
-
+        
         if (NSApp) {
             notificationName = @"NSApplicationWillTerminateNotification";
         }
-
+        
 #endif
-
+        
         if (!notificationName) {
             // If there is no NSApp -> we are running Command Line Tool app.
             // In this case terminate notification wouldn't be fired, so we use workaround.
@@ -168,16 +198,18 @@ static NSUInteger _numProcessors;
                 [self applicationWillTerminate:nil];
             });
         }
-
-#endif /* if TARGET_OS_IPHONE */
-
+        
+#endif /* if TARGET_OS_IOS */
+        
         if (notificationName) {
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(applicationWillTerminate:)
                                                          name:notificationName
                                                        object:nil];
         }
-    });
+    }
+    
+    return self;
 }
 
 /**
@@ -191,7 +223,7 @@ static NSUInteger _numProcessors;
 #pragma mark Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-+ (void)applicationWillTerminate:(NSNotification *)notification {
+- (void)applicationWillTerminate:(NSNotification * __attribute__((unused)))notification {
     [self flushLog];
 }
 
@@ -200,42 +232,62 @@ static NSUInteger _numProcessors;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 + (void)addLogger:(id <DDLogger>)logger {
+    [self.sharedInstance addLogger:logger];
+}
+
+- (void)addLogger:(id <DDLogger>)logger {
     [self addLogger:logger withLevel:DDLogLevelAll]; // DDLogLevelAll has all bits set
 }
 
 + (void)addLogger:(id <DDLogger>)logger withLevel:(DDLogLevel)level {
+    [self.sharedInstance addLogger:logger withLevel:level];
+}
+
+- (void)addLogger:(id <DDLogger>)logger withLevel:(DDLogLevel)level {
     if (!logger) {
         return;
     }
-
+    
     dispatch_async(_loggingQueue, ^{ @autoreleasepool {
-                                        [self lt_addLogger:logger level:level];
-                                    } });
+        [self lt_addLogger:logger level:level];
+    } });
 }
 
 + (void)removeLogger:(id <DDLogger>)logger {
+    [self.sharedInstance removeLogger:logger];
+}
+
+- (void)removeLogger:(id <DDLogger>)logger {
     if (!logger) {
         return;
     }
-
+    
     dispatch_async(_loggingQueue, ^{ @autoreleasepool {
-                                        [self lt_removeLogger:logger];
-                                    } });
+        [self lt_removeLogger:logger];
+    } });
 }
 
 + (void)removeAllLoggers {
+    [self.sharedInstance removeAllLoggers];
+}
+
+- (void)removeAllLoggers {
     dispatch_async(_loggingQueue, ^{ @autoreleasepool {
-                                        [self lt_removeAllLoggers];
-                                    } });
+        [self lt_removeAllLoggers];
+    } });
 }
 
 + (NSArray *)allLoggers {
+    return [self.sharedInstance allLoggers];
+}
+
+- (NSArray *)allLoggers {
     __block NSArray *theLoggers;
-
+    
     dispatch_sync(_loggingQueue, ^{ @autoreleasepool {
-                                       theLoggers = [self lt_allLoggers];
-                                   } });
-
+        theLoggers = [self lt_allLoggers];
+    } });
+    
     return theLoggers;
 }
 
@@ -243,7 +295,7 @@ static NSUInteger _numProcessors;
 #pragma mark - Master Logging
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-+ (void)queueLogMessage:(DDLogMessage *)logMessage asynchronously:(BOOL)asyncFlag {
+- (void)queueLogMessage:(DDLogMessage *)logMessage asynchronously:(BOOL)asyncFlag {
     // We have a tricky situation here...
     //
     // In the common case, when the queueSize is below the maximumQueueSize,
@@ -303,10 +355,10 @@ static NSUInteger _numProcessors;
 + (void)log:(BOOL)asynchronous
       level:(DDLogLevel)level
        flag:(DDLogFlag)flag
-    context:(int)context
+    context:(NSInteger)context
        file:(const char *)file
    function:(const char *)function
-       line:(int)line
+       line:(NSUInteger)line
         tag:(id)tag
      format:(NSString *)format, ... {
     va_list args;
@@ -324,7 +376,36 @@ static NSUInteger _numProcessors;
          function:function
              line:line
               tag:tag];
+        
+        va_end(args);
+    }
+}
 
+- (void)log:(BOOL)asynchronous
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id)tag
+     format:(NSString *)format, ... {
+    va_list args;
+    
+    if (format) {
+        va_start(args, format);
+        
+        NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+        [self log:asynchronous
+          message:message
+            level:level
+             flag:flag
+          context:context
+             file:file
+         function:function
+             line:line
+              tag:tag];
+        
         va_end(args);
     }
 }
@@ -332,14 +413,26 @@ static NSUInteger _numProcessors;
 + (void)log:(BOOL)asynchronous
       level:(DDLogLevel)level
        flag:(DDLogFlag)flag
-    context:(int)context
+    context:(NSInteger)context
        file:(const char *)file
    function:(const char *)function
-       line:(int)line
+       line:(NSUInteger)line
         tag:(id)tag
      format:(NSString *)format
        args:(va_list)args {
-    
+    [self.sharedInstance log:asynchronous level:level flag:flag context:context file:file function:function line:line tag:tag format:format args:args];
+}
+
+- (void)log:(BOOL)asynchronous
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id)tag
+     format:(NSString *)format
+       args:(va_list)args {
     if (format) {
         NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
         [self log:asynchronous
@@ -358,12 +451,23 @@ static NSUInteger _numProcessors;
     message:(NSString *)message
       level:(DDLogLevel)level
        flag:(DDLogFlag)flag
-    context:(int)context
+    context:(NSInteger)context
        file:(const char *)file
    function:(const char *)function
-       line:(int)line
+       line:(NSUInteger)line
         tag:(id)tag {
-    
+    [self.sharedInstance log:asynchronous message:message level:level flag:flag context:context file:file function:function line:line tag:tag];
+}
+
+- (void)log:(BOOL)asynchronous
+    message:(NSString *)message
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id)tag {
     DDLogMessage *logMessage = [[DDLogMessage alloc] initWithMessage:message
                                                                level:level
                                                                 flag:flag
@@ -372,7 +476,7 @@ static NSUInteger _numProcessors;
                                                             function:[NSString stringWithFormat:@"%s", function]
                                                                 line:line
                                                                  tag:tag
-                                                             options:0
+                                                             options:(DDLogMessageOptions)0
                                                            timestamp:nil];
     
     [self queueLogMessage:logMessage asynchronously:asynchronous];
@@ -380,13 +484,22 @@ static NSUInteger _numProcessors;
 
 + (void)log:(BOOL)asynchronous
     message:(DDLogMessage *)logMessage {
+    [self.sharedInstance log:asynchronous message:logMessage];
+}
+
+- (void)log:(BOOL)asynchronous
+    message:(DDLogMessage *)logMessage {
     [self queueLogMessage:logMessage asynchronously:asynchronous];
 }
 
 + (void)flushLog {
+    [self.sharedInstance flushLog];
+}
+
+- (void)flushLog {
     dispatch_sync(_loggingQueue, ^{ @autoreleasepool {
-                                       [self lt_flush];
-                                   } });
+        [self lt_flush];
+    } });
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +510,7 @@ static NSUInteger _numProcessors;
     SEL getterSel = @selector(ddLogLevel);
     SEL setterSel = @selector(ddSetLogLevel:);
 
-#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR
 
     // Issue #6 (GoogleCode) - Crashes on iOS 4.2.1 and iPhone 4
     //
@@ -436,7 +549,7 @@ static NSUInteger _numProcessors;
 
     return result;
 
-#else /* if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR */
+#else /* if TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR */
 
     // Issue #24 (GitHub) - Crashing in in ARC+Simulator
     //
@@ -452,11 +565,10 @@ static NSUInteger _numProcessors;
 
     return NO;
 
-#endif /* if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR */
+#endif /* if TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR */
 }
 
 + (NSArray *)registeredClasses {
-    NSUInteger numClasses, i;
 
     // We're going to get the list of all registered classes.
     // The Objective-C runtime library automatically registers all the classes defined in your source code.
@@ -469,24 +581,37 @@ static NSUInteger _numProcessors;
     // registered class definitions without actually retrieving any class definitions.
     // This allows us to allocate the minimum amount of memory needed for the application.
 
-    numClasses = (NSUInteger)MAX(objc_getClassList(NULL, 0), 0);
+    NSUInteger numClasses = 0;
+    Class *classes = NULL;
 
-    // The numClasses method now tells us how many classes we have.
-    // So we can allocate our buffer, and get pointers to all the class definitions.
+    while (numClasses == 0) {
 
-    Class *classes = numClasses ? (Class *)malloc(sizeof(Class) * numClasses) : NULL;
+        numClasses = (NSUInteger)MAX(objc_getClassList(NULL, 0), 0);
 
-    if (classes == NULL) {
-        return nil;
+        // numClasses now tells us how many classes we have (but it might change)
+        // So we can allocate our buffer, and get pointers to all the class definitions.
+
+        NSUInteger bufferSize = numClasses;
+
+        classes = numClasses ? (Class *)malloc(sizeof(Class) * bufferSize) : NULL;
+        if (classes == NULL) {
+            return nil; //no memory or classes?
+        }
+
+        numClasses = (NSUInteger)MAX(objc_getClassList(classes, (int)bufferSize),0);
+
+        if (numClasses > bufferSize || numClasses == 0) {
+            //apparently more classes added between calls (or a problem); try again
+            free(classes);
+            numClasses = 0;
+        }
     }
-
-    numClasses = (NSUInteger)MAX(objc_getClassList(classes, (int)numClasses), 0);
 
     // We can now loop through the classes, and test each one to see if it is a DDLogging class.
 
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:numClasses];
 
-    for (i = 0; i < numClasses; i++) {
+    for (NSUInteger i = 0; i < numClasses; i++) {
         Class class = classes[i];
 
         if ([self isRegisteredClass:class]) {
@@ -513,7 +638,7 @@ static NSUInteger _numProcessors;
     if ([self isRegisteredClass:aClass]) {
         return [aClass ddLogLevel];
     }
-    return -1;
+    return (DDLogLevel)-1;
 }
 
 + (DDLogLevel)levelForClassWithName:(NSString *)aClassName {
@@ -537,9 +662,17 @@ static NSUInteger _numProcessors;
 #pragma mark Logging Thread
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-+ (void)lt_addLogger:(id <DDLogger>)logger level:(DDLogLevel)level {
+- (void)lt_addLogger:(id <DDLogger>)logger level:(DDLogLevel)level {
     // Add to loggers array.
     // Need to create loggerQueue if loggerNode doesn't provide one.
+
+    for (DDLoggerNode* node in self._loggers) {
+        if (node->_logger == logger
+            && node->_level == level) {
+            // Exactly same logger already added, exit
+            return;
+        }
+    }
 
     NSAssert(dispatch_get_specific(GlobalLoggingQueueIdentityKey),
              @"This method should only be run on the logging thread/queue");
@@ -566,7 +699,7 @@ static NSUInteger _numProcessors;
     }
 
     DDLoggerNode *loggerNode = [DDLoggerNode nodeWithLogger:logger loggerQueue:loggerQueue level:level];
-    [_loggers addObject:loggerNode];
+    [self._loggers addObject:loggerNode];
 
     if ([logger respondsToSelector:@selector(didAddLogger)]) {
         dispatch_async(loggerNode->_loggerQueue, ^{ @autoreleasepool {
@@ -575,7 +708,7 @@ static NSUInteger _numProcessors;
     }
 }
 
-+ (void)lt_removeLogger:(id <DDLogger>)logger {
+- (void)lt_removeLogger:(id <DDLogger>)logger {
     // Find associated loggerNode in list of added loggers
 
     NSAssert(dispatch_get_specific(GlobalLoggingQueueIdentityKey),
@@ -583,7 +716,7 @@ static NSUInteger _numProcessors;
 
     DDLoggerNode *loggerNode = nil;
 
-    for (DDLoggerNode *node in _loggers) {
+    for (DDLoggerNode *node in self._loggers) {
         if (node->_logger == logger) {
             loggerNode = node;
             break;
@@ -603,15 +736,15 @@ static NSUInteger _numProcessors;
     }
     
     // Remove from loggers array
-    [_loggers removeObject:loggerNode];
+    [self._loggers removeObject:loggerNode];
 }
 
-+ (void)lt_removeAllLoggers {
+- (void)lt_removeAllLoggers {
     NSAssert(dispatch_get_specific(GlobalLoggingQueueIdentityKey),
              @"This method should only be run on the logging thread/queue");
     
     // Notify all loggers
-    for (DDLoggerNode *loggerNode in _loggers) {
+    for (DDLoggerNode *loggerNode in self._loggers) {
         if ([loggerNode->_logger respondsToSelector:@selector(willRemoveLogger)]) {
             dispatch_async(loggerNode->_loggerQueue, ^{ @autoreleasepool {
                 [loggerNode->_logger willRemoveLogger];
@@ -621,23 +754,23 @@ static NSUInteger _numProcessors;
     
     // Remove all loggers from array
 
-    [_loggers removeAllObjects];
+    [self._loggers removeAllObjects];
 }
 
-+ (NSArray *)lt_allLoggers {
+- (NSArray *)lt_allLoggers {
     NSAssert(dispatch_get_specific(GlobalLoggingQueueIdentityKey),
              @"This method should only be run on the logging thread/queue");
 
     NSMutableArray *theLoggers = [NSMutableArray new];
 
-    for (DDLoggerNode *loggerNode in _loggers) {
+    for (DDLoggerNode *loggerNode in self._loggers) {
         [theLoggers addObject:loggerNode->_logger];
     }
 
     return [theLoggers copy];
 }
 
-+ (void)lt_log:(DDLogMessage *)logMessage {
+- (void)lt_log:(DDLogMessage *)logMessage {
     // Execute the given log message on each of our loggers.
 
     NSAssert(dispatch_get_specific(GlobalLoggingQueueIdentityKey),
@@ -651,7 +784,7 @@ static NSUInteger _numProcessors;
         // The waiting ensures that a slow logger doesn't end up with a large queue of pending log messages.
         // This would defeat the purpose of the efforts we made earlier to restrict the max queue size.
 
-        for (DDLoggerNode *loggerNode in _loggers) {
+        for (DDLoggerNode *loggerNode in self._loggers) {
             // skip the loggers that shouldn't write this message based on the log level
 
             if (!(logMessage->_flag & loggerNode->_level)) {
@@ -667,7 +800,7 @@ static NSUInteger _numProcessors;
     } else {
         // Execute each logger serialy, each within its own queue.
         
-        for (DDLoggerNode *loggerNode in _loggers) {
+        for (DDLoggerNode *loggerNode in self._loggers) {
             // skip the loggers that shouldn't write this message based on the log level
 
             if (!(logMessage->_flag & loggerNode->_level)) {
@@ -697,7 +830,7 @@ static NSUInteger _numProcessors;
     dispatch_semaphore_signal(_queueSemaphore);
 }
 
-+ (void)lt_flush {
+- (void)lt_flush {
     // All log statements issued before the flush method was invoked have now been executed.
     //
     // Now we need to propogate the flush request to any loggers that implement the flush method.
@@ -706,7 +839,7 @@ static NSUInteger _numProcessors;
     NSAssert(dispatch_get_specific(GlobalLoggingQueueIdentityKey),
              @"This method should only be run on the logging thread/queue");
     
-    for (DDLoggerNode *loggerNode in _loggers) {
+    for (DDLoggerNode *loggerNode in self._loggers) {
         if ([loggerNode->_logger respondsToSelector:@selector(flush)]) {
             dispatch_group_async(_loggingGroup, loggerNode->_loggerQueue, ^{ @autoreleasepool {
                 [loggerNode->_logger flush];
@@ -837,12 +970,19 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
 //    dispatch_get_current_queue(void);
 //      __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_6,__MAC_10_9,__IPHONE_4_0,__IPHONE_6_0)
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
 
 // Compiling for iOS
 
     #define USE_DISPATCH_CURRENT_QUEUE_LABEL ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
     #define USE_DISPATCH_GET_CURRENT_QUEUE   ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.1)
+
+#elif TARGET_OS_WATCH || TARGET_OS_TV
+
+// Compiling for watchOS, tvOS
+
+#define USE_DISPATCH_CURRENT_QUEUE_LABEL YES
+#define USE_DISPATCH_GET_CURRENT_QUEUE   YES
 
 #else
 
@@ -864,12 +1004,43 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
 
   #endif
 
-#endif /* if TARGET_OS_IPHONE */
+#endif /* if TARGET_OS_IOS */
+
+// Should we use pthread_threadid_np ?
+// With iOS 8+/OSX 10.10+ NSLog uses pthread_threadid_np instead of pthread_mach_thread_np
+
+#if TARGET_OS_IOS
+
+// Compiling for iOS
+
+  #ifndef kCFCoreFoundationVersionNumber_iOS_8_0
+    #define kCFCoreFoundationVersionNumber_iOS_8_0 1140.10
+  #endif
+
+    #define USE_PTHREAD_THREADID_NP                (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_8_0)
+
+#elif TARGET_OS_WATCH || TARGET_OS_TV
+
+// Compiling for watchOS, tvOS
+
+#define USE_PTHREAD_THREADID_NP                    YES
+
+#else
+
+// Compiling for Mac OS X
+
+  #ifndef kCFCoreFoundationVersionNumber10_10
+    #define kCFCoreFoundationVersionNumber10_10    1151.16
+  #endif
+
+    #define USE_PTHREAD_THREADID_NP                (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber10_10)
+
+#endif /* if TARGET_OS_IOS */
 
 - (instancetype)initWithMessage:(NSString *)message
                           level:(DDLogLevel)level
                            flag:(DDLogFlag)flag
-                        context:(NSUInteger)context
+                        context:(NSInteger)context
                            file:(NSString *)file
                        function:(NSString *)function
                            line:(NSUInteger)line
@@ -877,18 +1048,29 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
                         options:(DDLogMessageOptions)options
                       timestamp:(NSDate *)timestamp {
     if ((self = [super init])) {
-        _message      = message;
+        _message      = [message copy];
         _level        = level;
         _flag         = flag;
         _context      = context;
-        _file         = file;
-        _function     = function;
+
+        BOOL copyFile = (options & DDLogMessageCopyFile) == DDLogMessageCopyFile;
+        _file = copyFile ? [file copy] : file;
+
+        BOOL copyFunction = (options & DDLogMessageCopyFunction) == DDLogMessageCopyFunction;
+        _function = copyFunction ? [function copy] : function;
+
         _line         = line;
         _tag          = tag;
         _options      = options;
         _timestamp    = timestamp ?: [NSDate new];
-        
-        _threadID     = [[NSString alloc] initWithFormat:@"%x", pthread_mach_thread_np(pthread_self())];
+
+        if (USE_PTHREAD_THREADID_NP) {
+            __uint64_t tid;
+            pthread_threadid_np(NULL, &tid);
+            _threadID = [[NSString alloc] initWithFormat:@"%llu", tid];
+        } else {
+            _threadID = [[NSString alloc] initWithFormat:@"%x", pthread_mach_thread_np(pthread_self())];
+        }
         _threadName   = NSThread.currentThread.name;
 
         // Get the file name without extension
@@ -915,7 +1097,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(NSZone * __attribute__((unused)))zone {
     DDLogMessage *newMessage = [DDLogMessage new];
     
     newMessage->_message = _message;
@@ -988,7 +1170,7 @@ NSString * DDExtractFileNameWithoutExtension(const char *filePath, BOOL copy) {
     #endif
 }
 
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void)logMessage:(DDLogMessage * __attribute__((unused)))logMessage {
     // Override me
 }
 

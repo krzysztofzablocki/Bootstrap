@@ -4,20 +4,121 @@
 
 CocoaLumberjack
 ===============
-[![Build Status](http://img.shields.io/travis/CocoaLumberjack/CocoaLumberjack/master.svg?style=flat)](https://travis-ci.org/CocoaLumberjack/CocoaLumberjack)
+[![Build Status](https://travis-ci.org/CocoaLumberjack/CocoaLumberjack.svg?branch=master)](https://travis-ci.org/CocoaLumberjack/CocoaLumberjack)
 [![Pod Version](http://img.shields.io/cocoapods/v/CocoaLumberjack.svg?style=flat)](http://cocoadocs.org/docsets/CocoaLumberjack/)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Pod Platform](http://img.shields.io/cocoapods/p/CocoaLumberjack.svg?style=flat)](http://cocoadocs.org/docsets/CocoaLumberjack/)
 [![Pod License](http://img.shields.io/cocoapods/l/CocoaLumberjack.svg?style=flat)](http://opensource.org/licenses/BSD-3-Clause)
 [![Reference Status](https://www.versioneye.com/objective-c/cocoalumberjack/reference_badge.svg?style=flat)](https://www.versioneye.com/objective-c/cocoalumberjack/references)
 
 **CocoaLumberjack** is a fast & simple, yet powerful & flexible logging framework for Mac and iOS.
 
-### CocoaLumberjack 2 pre-release notes
+### How to get started
+- install via [CocoaPods](http://cocoapods.org)
 
-#### Migrating to 2.x-beta
+##### Swift version via CocoaPods
+```ruby
+platform :ios, '8.0'
+pod 'CocoaLumberjack/Swift'
+use_frameworks!
+```
+Note: `Swift` is a subspec which will include all the Obj-C code plus the Swift one, so this is sufficient. 
+For more details about how to use Swift with Lumberjack, see [this conversation](https://github.com/CocoaLumberjack/CocoaLumberjack/issues/405).
+
+##### Swift Usage
+
+If you installed using CocoaPods or manually:
+```swift
+import CocoaLumberjack
+```
+
+```swift
+DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
+DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
+
+let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+fileLogger.rollingFrequency = 60*60*24  // 24 hours
+fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+DDLog.addLogger(fileLogger)
+
+...
+
+DDLogVerbose("Verbose");
+DDLogDebug("Debug");
+DDLogInfo("Info");
+DDLogWarn("Warn");
+DDLogError("Error");
+```
+
+##### Obj-C version via CocoaPods
+
+```ruby
+platform :ios, '7.0'
+pod 'CocoaLumberjack'
+```
+
+##### Obj-C usage
+If you're using Lumberjack as a framework, you can `@import CocoaLumberjack`.
+
+Otherwise, `#import <CocoaLumberjack/CocoaLumberjack.h>`
+
+```objc
+[DDLog addLogger:[DDTTYLogger sharedInstance]]; // TTY = Xcode console
+[DDLog addLogger:[DDASLLogger sharedInstance]]; // ASL = Apple System Logs
+
+DDFileLogger *fileLogger = [[DDFileLogger alloc] init]; // File Logger
+fileLogger.rollingFrequency = 60 * 60 * 24; // 24 hour rolling
+fileLogger.logFileManager.maximumNumberOfLogFiles = 7;
+[DDLog addLogger:fileLogger];
+
+...
+
+DDLogVerbose(@"Verbose");
+DDLogDebug(@"Debug");
+DDLogInfo(@"Info");
+DDLogWarn(@"Warn");
+DDLogError(@"Error");
+```
+
+##### Installation with Carthage (iOS 8+)
+
+[Carthage](https://github.com/Carthage/Carthage) is a lightweight dependency manager for Swift and Objective-C. It leverages CocoaTouch modules and is less invasive than CocoaPods.
+
+To install with Carthage, follow the instruction on [Carthage](https://github.com/Carthage/Carthage)
+
+Cartfile
+```
+github "CocoaLumberjack/CocoaLumberjack"
+```
+
+- or [install manually](Documentation/GettingStarted.md#manual-installation)
+- read the [Getting started](Documentation/GettingStarted.md) guide, check out the [FAQ](Documentation/FAQ.md) section or the other [docs](Documentation/)
+- if you find issues or want to suggest improvements, create an issue or a pull request
+- for all kinds of questions involving CocoaLumberjack, use the [Google group](http://groups.google.com/group/cocoalumberjack) or StackOverflow (use [#lumberjack](http://stackoverflow.com/questions/tagged/lumberjack)).
+
+### CocoaLumberjack 2
+
+#### Migrating to 2.x
 
 * Replace `DDLog.h` imports by `#import <CocoaLumberjack/CocoaLumberjack.h>`.
+
+Advanced users, third party libraries:
+
 * Replace all `DDLogC` macros for regular `DDLog` macros.
+* Replace log level (`LOG_LEVEL_*`) macros with `DDLogLevel` enum values
+* Replace log flag (`LOG_FLAG_*`) macros with `DDLogFlag` enum values
+* Replace `DDLogMessage` ivars and method calls to the new ivars and methods
+  * `logMsg` with `_message`
+  * `logLevel` with `_level`
+  * `logFlag` with `_flag`
+  * `logContext` with `_context`
+  * `lineNumber` with `_line` (type changed from `int` to `NSUInteger`)
+  * `file` with `_file` (`filename` contains just the file name, without the extension and the full path)
+  * `timestamp` with `_timestamp`
+  * `methodName` with `function`
+* Replace `DDAbstractLogger` `formatter` to `logFormatter`
+* `YSSingleFileLogger` ivars are no longer accesible, use the methods instead
+* Replace `[DDLog addLogger:withLogLevel:]` with `[DDLog addLogger:withLevel:]`
 
 #### Forcing 1.x
 
@@ -57,17 +158,6 @@ Configure your logging however you want. Change log levels per file (perfect for
 -   You're looking to take your application to the next level in terms of support and stability.
 -   You're looking for an enterprise level logging solution for your application (Mac or iPhone).
 
-### How to get started
-- install via [CocoaPods](http://cocoapods.org)
-
-```ruby
-platform :ios, '6.1'
-pod 'CocoaLumberjack'
-```
-- read the [Getting started](Documentation/GettingStarted.md) guide, check out the [FAQ](Documentation/FAQ.md) section or the other [docs](Documentation/)
-- if you find issues or want to suggest improvements, create an issue or a pull request
-- for all kinds of questions involving CocoaLumberjack, use the [Google group](http://groups.google.com/group/cocoalumberjack) or StackOverflow (use [#lumberjack](http://stackoverflow.com/questions/tagged/lumberjack)).
-
 ### Documentation
 
 - **[Get started using Lumberjack](Documentation/GettingStarted.md)**<br/>
@@ -82,9 +172,17 @@ pod 'CocoaLumberjack'
 - **[Full Lumberjack documentation](Documentation/)**<br/>
 
 ### Requirements 
-- Xcode 4.4 or later is required
+The current version of Lumberjack requires:
+- Xcode 7.3 or later
 - iOS 5 or later
 - OS X 10.7 or later
+- WatchOS 2 or later
+- TVOS 9 or later
+
+#### Backwards compability
+- for Xcode 7.2 and 7.1, use the 2.2.0 version
+- for Xcode 7.0 or earlier, use the 2.1.0 version
+- for Xcode 6 or earlier, use the 2.0.x version
 - for OS X < 10.7 support, use the 1.6.0 version
 
 ### Author

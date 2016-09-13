@@ -1,6 +1,6 @@
 // Software License Agreement (BSD License)
 //
-// Copyright (c) 2010-2014, Deusty, LLC
+// Copyright (c) 2010-2016, Deusty, LLC
 // All rights reserved.
 //
 // Redistribution and use of this software in source and binary forms,
@@ -59,9 +59,9 @@
 
 #import <Foundation/Foundation.h>
 
-// Legacy
-#ifndef DDLEGACY
-    #define DDLEGACY NO
+// Disable legacy macros
+#ifndef DD_LEGACY_MACROS
+    #define DD_LEGACY_MACROS 0
 #endif
 
 // Core

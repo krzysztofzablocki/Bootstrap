@@ -1,6 +1,6 @@
 // Software License Agreement (BSD License)
 //
-// Copyright (c) 2010-2014, Deusty, LLC
+// Copyright (c) 2010-2016, Deusty, LLC
 // All rights reserved.
 //
 // Redistribution and use of this software in source and binary forms,
@@ -29,13 +29,15 @@
 // So we use primitive logging macros around NSLog.
 // We maintain the NS prefix on the macros to be explicit about the fact that we're using NSLog.
 
-#define LOG_LEVEL 2
+#ifndef DD_NSLOG_LEVEL
+    #define DD_NSLOG_LEVEL 2
+#endif
 
-#define NSLogError(frmt, ...)    do{ if(LOG_LEVEL >= 1) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogWarn(frmt, ...)     do{ if(LOG_LEVEL >= 2) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogInfo(frmt, ...)     do{ if(LOG_LEVEL >= 3) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogDebug(frmt, ...)    do{ if(LOG_LEVEL >= 4) NSLog((frmt), ##__VA_ARGS__); } while(0)
-#define NSLogVerbose(frmt, ...)  do{ if(LOG_LEVEL >= 5) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogError(frmt, ...)    do{ if(DD_NSLOG_LEVEL >= 1) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogWarn(frmt, ...)     do{ if(DD_NSLOG_LEVEL >= 2) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogInfo(frmt, ...)     do{ if(DD_NSLOG_LEVEL >= 3) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogDebug(frmt, ...)    do{ if(DD_NSLOG_LEVEL >= 4) NSLog((frmt), ##__VA_ARGS__); } while(0)
+#define NSLogVerbose(frmt, ...)  do{ if(DD_NSLOG_LEVEL >= 5) NSLog((frmt), ##__VA_ARGS__); } while(0)
 
 // Xcode does NOT natively support colors in the Xcode debugging console.
 // You'll need to install the XcodeColors plugin to see colors in the Xcode console.
@@ -81,7 +83,7 @@
 @interface DDTTYLoggerColorProfile : NSObject {
     @public
     DDLogFlag mask;
-    int context;
+    NSInteger context;
 
     uint8_t fg_r;
     uint8_t fg_g;
@@ -107,7 +109,7 @@
     size_t resetCodeLen;
 }
 
-- (instancetype)initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)mask context:(int)ctxt;
+- (instancetype)initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)mask context:(NSInteger)ctxt;
 
 @end
 
@@ -693,7 +695,7 @@ static DDTTYLogger *sharedInstance;
         CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
 
         unsigned char pixel[4];
-        CGContextRef context = CGBitmapContextCreate(&pixel, 1, 1, 8, 4, rgbColorSpace, kCGBitmapAlphaInfoMask & kCGImageAlphaNoneSkipLast);
+        CGContextRef context = CGBitmapContextCreate(&pixel, 1, 1, 8, 4, rgbColorSpace, (CGBitmapInfo)(kCGBitmapAlphaInfoMask & kCGImageAlphaNoneSkipLast));
 
         CGContextSetFillColorWithColor(context, [color CGColor]);
         CGContextFillRect(context, CGRectMake(0, 0, 1, 1));
@@ -714,20 +716,19 @@ static DDTTYLogger *sharedInstance;
         CGColorSpaceRelease(rgbColorSpace);
     }
 
-    #elif __has_include(<AppKit/NSColor.h>)
+    #elif defined(DD_CLI) || !__has_include(<AppKit/NSColor.h>)
+
+    // OS X without AppKit
+
+    [color getRed:rPtr green:gPtr blue:bPtr alpha:NULL];
+
+    #else /* if TARGET_OS_IPHONE */
 
     // OS X with AppKit
 
     NSColor *safeColor = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
 
     [safeColor getRed:rPtr green:gPtr blue:bPtr alpha:NULL];
-
-    #else /* if TARGET_OS_IPHONE */
-
-    // OS X without AppKit
-
-    [color getRed:rPtr green:gPtr blue:bPtr alpha:NULL];
-
     #endif /* if TARGET_OS_IPHONE */
 }
 
@@ -847,6 +848,7 @@ static DDTTYLogger *sharedInstance;
         BOOL processedAppName = [_appName getCString:_app maxLength:(_appLen + 1) encoding:NSUTF8StringEncoding];
 
         if (NO == processedAppName) {
+            free(_app);
             return nil;
         }
 
@@ -858,12 +860,15 @@ static DDTTYLogger *sharedInstance;
         _pid = (char *)malloc(_pidLen + 1);
 
         if (_pid == NULL) {
+            free(_app);
             return nil;
         }
 
         BOOL processedID = [_processID getCString:_pid maxLength:(_pidLen + 1) encoding:NSUTF8StringEncoding];
 
         if (NO == processedID) {
+            free(_app);
+            free(_pid);
             return nil;
         }
 
@@ -946,7 +951,7 @@ static DDTTYLogger *sharedInstance;
     [self setForegroundColor:txtColor backgroundColor:bgColor forFlag:mask context:LOG_CONTEXT_ALL];
 }
 
-- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask context:(int)ctxt {
+- (void)setForegroundColor:(DDColor *)txtColor backgroundColor:(DDColor *)bgColor forFlag:(DDLogFlag)mask context:(NSInteger)ctxt {
     dispatch_block_t block = ^{
         @autoreleasepool {
             DDTTYLoggerColorProfile *newColorProfile =
@@ -998,7 +1003,7 @@ static DDTTYLogger *sharedInstance;
             DDTTYLoggerColorProfile *newColorProfile =
                 [[DDTTYLoggerColorProfile alloc] initWithForegroundColor:txtColor
                                                          backgroundColor:bgColor
-                                                                    flag:0
+                                                                    flag:(DDLogFlag)0
                                                                  context:0];
 
             NSLogInfo(@"DDTTYLogger: newColorProfile: %@", newColorProfile);
@@ -1026,7 +1031,7 @@ static DDTTYLogger *sharedInstance;
     [self clearColorsForFlag:mask context:0];
 }
 
-- (void)clearColorsForFlag:(DDLogFlag)mask context:(int)context {
+- (void)clearColorsForFlag:(DDLogFlag)mask context:(NSInteger)context {
     dispatch_block_t block = ^{
         @autoreleasepool {
             NSUInteger i = 0;
@@ -1247,7 +1252,7 @@ static DDTTYLogger *sharedInstance;
             v[2].iov_base = (char *)msg;
             v[2].iov_len = msgLen;
 
-            if (_automaticallyAppendNewlineForCustomFormatters) {
+            if (iovec_len == 5) {
                 v[3].iov_base = "\n";
                 v[3].iov_len = (msg[msgLen] == '\n') ? 0 : 1;
             }
@@ -1365,7 +1370,7 @@ static DDTTYLogger *sharedInstance;
 
 @implementation DDTTYLoggerColorProfile
 
-- (instancetype)initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)aMask context:(int)ctxt {
+- (instancetype)initWithForegroundColor:(DDColor *)fgColor backgroundColor:(DDColor *)bgColor flag:(DDLogFlag)aMask context:(NSInteger)ctxt {
     if ((self = [super init])) {
         mask = aMask;
         context = ctxt;
@@ -1469,8 +1474,8 @@ static DDTTYLogger *sharedInstance;
 
 - (NSString *)description {
     return [NSString stringWithFormat:
-            @"<DDTTYLoggerColorProfile: %p mask:%i ctxt:%i fg:%u,%u,%u bg:%u,%u,%u fgCode:%@ bgCode:%@>",
-            self, (int)mask, context, fg_r, fg_g, fg_b, bg_r, bg_g, bg_b, fgCodeRaw, bgCodeRaw];
+            @"<DDTTYLoggerColorProfile: %p mask:%i ctxt:%ld fg:%u,%u,%u bg:%u,%u,%u fgCode:%@ bgCode:%@>",
+            self, (int)mask, (long)context, fg_r, fg_g, fg_b, bg_r, bg_g, bg_b, fgCodeRaw, bgCodeRaw];
 }
 
 @end
