@@ -18,15 +18,15 @@ static const NSCalendarUnit CRLMethodLogFormatterCalendarUnitFlags = (NSCalendar
 
 NS_INLINE const char *CRLLogFlagToCString(int logFlag) {
   switch (logFlag) {
-    case LOG_FLAG_ERROR:
+    case DDLogLevelError:
       return "ERR";
-    case LOG_FLAG_WARN:
+    case DDLogLevelWarning:
       return "WRN";
-    case LOG_FLAG_INFO:
+    case DDLogLevelInfo:
       return "INF";
-    case LOG_FLAG_DEBUG:
+    case DDLogLevelDebug:
       return "DBG";
-    case LOG_FLAG_VERBOSE:
+    case DDLogLevelVerbose:
       return "VRB";
 
     default:
