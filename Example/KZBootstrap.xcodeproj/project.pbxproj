@@ -249,6 +249,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Krzysztof Zablocki";
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						LastSwiftMigration = 0820;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -582,6 +585,7 @@
 				INFOPLIST_FILE = "KZBootstrap/KZBootstrap-Info.plist";
 				KZBEnv = "@\\\"QA\\\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -603,6 +607,7 @@
 				INFOPLIST_FILE = "KZBootstrap/KZBootstrap-Info.plist";
 				KZBEnv = "@\\\"QA\\\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -729,6 +734,7 @@
 				INFOPLIST_FILE = "KZBootstrap/KZBootstrap-Info.plist";
 				KZBEnv = "@\\\"QA\\\"";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = adhoc;
