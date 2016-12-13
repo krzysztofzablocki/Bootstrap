@@ -72,7 +72,7 @@ function processIcon() {
     base_file=$1
 
     cd "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
-    base_path=`find . -maxdepth 2 -name ${base_file}`
+    base_path=`find . -name ${base_file} -print -quit`
 
     real_path=$( abspath "${base_path}" )
     echo "base path ${real_path}"
