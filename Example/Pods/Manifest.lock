@@ -29,14 +29,14 @@ PODS:
   - CocoaLumberjack/Extensions (2.3.0):
     - CocoaLumberjack/Default
   - KZAsserts (1.0)
-  - KZBootstrap (0.6.1):
-    - KZBootstrap/Core (= 0.6.1)
-  - KZBootstrap/Core (0.6.1):
+  - KZBootstrap (0.7.0):
+    - KZBootstrap/Core (= 0.7.0)
+  - KZBootstrap/Core (0.7.0):
     - KZAsserts (~> 1.0)
-  - KZBootstrap/Debug (0.6.1):
+  - KZBootstrap/Debug (0.7.0):
     - KZAsserts (~> 1.0)
     - RSSwizzle
-  - KZBootstrap/Logging (0.6.1):
+  - KZBootstrap/Logging (0.7.0):
     - CocoaLumberjack (~> 2.3.0)
   - RSSwizzle (0.1.0)
 
@@ -54,9 +54,9 @@ SPEC CHECKSUMS:
   AFNetworking: 41d45d2c14219af0fa5addf3cfd433a002c13c9f
   CocoaLumberjack: 97fab7ee5f507fe54445cca7ea80f926729cfd15
   KZAsserts: 6e613b569a33582dc94cf7a1f34a2c6d870982a7
-  KZBootstrap: 372505f67a929945386ba3c1535e611d4b630f66
+  KZBootstrap: 9f92001c4277153d6f1a27843e3e2dfb8c0be1df
   RSSwizzle: d561958f595028bfcef98c7d55c318b3878a61c6
 
 PODFILE CHECKSUM: 3be20d28cf6f5fdeacf02c28ff5b35da4f75e647
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.2.0.beta.1

@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   s.default_subspec = 'Core'
 
   s.subspec 'Core' do |ss|
-    ss.source_files = 'Pod/Classes/Core/'
+    ss.source_files = 'Pod/Classes/Core'
     ss.frameworks = 'Foundation'
     ss.dependency 'KZAsserts', '~> 1.0'
   end
@@ -46,5 +46,4 @@ Pod::Spec.new do |s|
     ss.dependency "CocoaLumberjack", "~> 2.3.0"
   end
 
-  s.public_header_files = 'Pod/Classes/**/*.h'
 end

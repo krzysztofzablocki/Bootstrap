@@ -1,6 +1,6 @@
 {
   "name": "KZBootstrap",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "summary": "iOS project bootstrap aimed at high quality coding.",
   "description": "Project bootstrap that provides automatic icon versioning, todo -> warning conversion, warnings while files become too long, build numbering, environment switching/validation and much more.",
   "homepage": "https://github.com/krzysztofzablocki/KZBootstrap",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/krzysztofzablocki/KZBootstrap.git",
-    "tag": "0.6.1"
+    "tag": "0.7.0"
   },
   "social_media_url": "https://twitter.com/merowing_",
   "platforms": {
@@ -18,7 +18,6 @@
   },
   "requires_arc": true,
   "preserve_paths": "Pod/Assets/Scripts/*.{sh,swift}",
-  "public_header_files": "Pod/Classes/**/*.h",
   "default_subspecs": "Core",
   "subspecs": [
     {
