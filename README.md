@@ -3,6 +3,8 @@
 [![License](https://img.shields.io/cocoapods/l/KZBootstrap.svg?style=flat)](http://cocoadocs.org/docsets/KZBootstrap)
 [![Platform](https://img.shields.io/cocoapods/p/KZBootstrap.svg?style=flat)](http://cocoadocs.org/docsets/KZBootstrap)
 
+foo bar
+
 # iOS Project bootstrap
 How do you setup your iOS projects?
 
