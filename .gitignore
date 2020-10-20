@@ -18,3 +18,5 @@ DerivedData
 *.xcuserstate
 
 KZBootstrapUserMacros.h
+
+foo.bar
